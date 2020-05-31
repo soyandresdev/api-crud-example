@@ -103,7 +103,7 @@ const createSpecialties = async (req, res) => {
       res.status(400).send({ message: 'Content can not be empty!' });
       return;
     }
-    if (name) {
+    if (!name) {
       res
         .status(400)
         .send({ message: "Error: Missing 'Name' parameter is requered" });
@@ -144,7 +144,12 @@ const createSpecialties = async (req, res) => {
 
 const updateSpecialties = async (req, res) => {
   try {
-    const { _id, name, updatedBy } = req.body;
+    const {
+      params: { id },
+    } = req;
+
+    const { name, updatedBy } = req.body;
+
     if (!req.body) {
       res.status(400).send({ message: 'Content can not be empty!' });
       return;
@@ -155,7 +160,7 @@ const updateSpecialties = async (req, res) => {
         message: "Error: Missing 'updatedBy' parameter",
       });
     } else {
-      await Specialties.findByIdAndUpdate(_id, {
+      await Specialties.findByIdAndUpdate(id, {
         name,
         updatedBy,
       });
@@ -176,27 +181,25 @@ const updateSpecialties = async (req, res) => {
  *  @body {string} _id - Mongo object to identify the Specialty.
  *  @returns {JSON} Object {status , message}.
  *  @throws {MissingBody} When body request is empty.
- *  @throws {MissingBodyName} When name is missing in body.
+ *  @throws {MissingBodyND} When _id is missing in body.
  *  @throws {ServerError} When we have an error on the server.
  */
 
 const deleteSpecialties = async (req, res) => {
   try {
-    const { _id } = req.body;
-    if (!_id) {
-      res.status(400).send({
-        status: 'ERROR',
-        message: "Error: Missing '_id' parameter",
-      });
-    } else {
-      await Specialties.findByIdAndDelete(_id);
-      res.send({
-        status: 'OK',
-        message: 'Success: Delete Document Specialty',
-      });
-    }
+    const {
+      params: { id },
+    } = req;
+    await Specialties.findByIdAndDelete(id);
+    res.send({
+      status: 'OK',
+      message: 'Success: Delete Document Specialty',
+    });
   } catch (e) {
-    res.status(500).send({ status: 'ERROR', message: e.message });
+    res.status(500).send({
+      status: 'ERROR',
+      message: 'Some error occurred while deleting the Specialty',
+    });
   }
 };
 
