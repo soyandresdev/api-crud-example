@@ -6,7 +6,6 @@ const swaggerUi = require('swagger-ui-express');
 const routesV1 = require('./routes/v1');
 
 const app = express();
-
 app.set('port', process.env.PORT || 4000);
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));

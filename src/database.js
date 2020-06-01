@@ -17,6 +17,7 @@ function initServer() {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     })
     .then(() => console.log('DB is connected'))
     .catch((err) => console.error(err));

@@ -85,10 +85,65 @@ const createProviders = async (req, res) => {
       status,
       specialty,
       createdBy,
-      updatedBy,
     } = req.body;
 
-    const provider = await Providers.create({
+    // Validate Number employerId, assignedTo, createdBy
+    const atributeValidate = {
+      employerId,
+      assignedTo,
+      createdBy,
+    };
+    const errorNumeric = Object.keys(atributeValidate).reduce(
+      (act, itemValidate) => {
+        if (typeof atributeValidate[itemValidate] !== 'number') {
+          act.push(itemValidate);
+        }
+        return act;
+      },
+      [],
+    );
+
+    if (errorNumeric.length > 0) {
+      res.status(400).send({
+        status: 'ERROR',
+        message: `These fields must be numeric: 
+          ${JSON.stringify(errorNumeric)}
+          `,
+      });
+    } else if (!createdBy) {
+      res.status(400).send({
+        status: 'ERROR',
+        message: "Error: Missing 'createdBy' parameter",
+      });
+    } else {
+      const provider = await Providers.create({
+        firstName,
+        lastName,
+        middleName,
+        email,
+        projectedStartDate,
+        employerId,
+        providerType,
+        staffStatus,
+        assignedTo,
+        status,
+        specialty,
+        createdBy,
+      });
+      res.send({ status: 'OK', data: provider });
+    }
+  } catch (e) {
+    res.status(500).send({ status: 'ERROR', data: e.message });
+  }
+};
+
+const updateProviders = async (req, res) => {
+  try {
+    const {
+      params: { id },
+    } = req;
+
+    const {
       firstName,
       lastName,
       middleName,
@@ -100,38 +155,55 @@ const createProviders = async (req, res) => {
       assignedTo,
       status,
       specialty,
-      createdBy,
       updatedBy,
-    });
-    res.send({ status: 'OK', data: provider });
-  } catch (e) {
-    res.status(500).send({ status: 'ERROR', data: e.message });
-  }
-};
+    } = req.body;
 
-const updateProviders = async (req, res) => {
-  try {
-    const products = await Providers.find({})
-      .select('title desc price')
-      .populate('user', 'username email data role');
-    res.send({ status: 'OK', data: products });
+    if (!req.body) {
+      res.status(400).send({ message: 'Content can not be empty!' });
+    } else if (!updatedBy) {
+      res.status(400).send({
+        status: 'ERROR',
+        message: "Error: Missing 'updatedBy' parameter",
+      });
+    } else {
+      await Providers.findByIdAndUpdate(id, {
+        firstName,
+        lastName,
+        middleName,
+        email,
+        projectedStartDate,
+        employerId,
+        providerType,
+        staffStatus,
+        assignedTo,
+        status,
+        specialty,
+        updatedBy,
+      });
+      res.send({
+        status: 'OK',
+        message: 'Success: Update Document Providers',
+      });
+    }
   } catch (e) {
-    console.log('Error on get Collection of Providers:', e);
-    res.status(500).send({ status: 'ERROR', data: e.message });
+    res.status(500).send({ status: 'ERROR', message: e.message });
   }
 };
 const deleteProviders = async (req, res) => {
   try {
-    const { id } = req.body;
-
-    if (!id) {
-      throw new Error('Missing param id');
-    }
-
+    const {
+      params: { id },
+    } = req;
     await Providers.findByIdAndDelete(id);
-    res.send({ status: 'OK', message: 'Providers deleted' });
+    res.send({
+      status: 'OK',
+      message: 'Success: Delete Document Providers',
+    });
   } catch (e) {
-    res.status(500).send({ status: 'ERROR', data: e.message });
+    res.status(500).send({
+      status: 'ERROR',
+      message: 'Some error occurred while deleting the Providers',
+    });
   }
 };
 
@@ -142,17 +214,3 @@ module.exports = {
   updateProviders,
   deleteProviders,
 };
-
-// {
-//     "firstName" : "Andres",
-//     "lastName" : "hernandez",
-//     "middleName" : "QQ",
-//     "email" : "andreshernandez@gmail.com",
-// 		"projectedStartDate": "2020-05-31T00:29:13.498Z",
-//     "employerId" : 805,
-//     "providerType" : "MD",
-//     "staffStatus" : "ASSOCIATE",
-//     "assignedTo" : 54321,
-//     "status" : "AWAITING_DECISION",
-//     "specialty": ["59baf9b7c52f6a85ec5ff962"]
-// }

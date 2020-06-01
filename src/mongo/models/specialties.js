@@ -33,5 +33,5 @@ const SpecialtiesSchema = new Schema(
 );
 
 const model = mongoose.model('Specialties', SpecialtiesSchema);
-
+module.exports.schema = SpecialtiesSchema;
 module.exports = model;

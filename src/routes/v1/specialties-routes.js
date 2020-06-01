@@ -52,12 +52,12 @@ router.post('/', specialtiesController.createSpecialties);
  *   get:
  *     tags:
  *       - Specialties
- *     description: get 10 Specialties
+ *     description: get a Specialties for id
  *     produces:
  *       - application/json
  *     parameters:
  *       - name: id
- *         description: name Object Mongo id
+ *         description: Object Mongo id
  *         in: path
  *     responses:
  *       200:
@@ -75,14 +75,14 @@ router.get('/:id', specialtiesController.getSpecialtiesForId);
  *       - application/json
  *     parameters:
  *       - name: id
- *         description: name Object Mongo id
+ *         description: Object Mongo id
  *         in: path
  *       - name: Specialty
  *         description: Specialty Object Model
  *         in: body
  *     responses:
  *       200:
- *         description: Object {status , {Specialty}}.
+ *         description: Object {status , message}.
  */
 router.put('/:id', specialtiesController.updateSpecialties);
 /**
@@ -96,11 +96,11 @@ router.put('/:id', specialtiesController.updateSpecialties);
  *       - application/json
  *     parameters:
  *       - name: id
- *         description: name Object Mongo id
+ *         description: Object Mongo id
  *         in: path
  *     responses:
  *       200:
- *         description: Object {status , {Specialty}}.
+ *         description: Object {status , message}.
  */
 router.delete('/:id', specialtiesController.deleteSpecialties);
 

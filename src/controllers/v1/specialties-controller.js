@@ -99,17 +99,36 @@ const createSpecialties = async (req, res) => {
   try {
     const { name, createdBy } = req.body;
 
-    if (!req.body) {
+    const atributeValidate = {
+      createdBy,
+    };
+    const errorNumeric = Object.keys(atributeValidate).reduce(
+      (act, itemValidate) => {
+        if (typeof atributeValidate[itemValidate] !== 'number') {
+          act.push(itemValidate);
+        }
+        return act;
+      },
+      [],
+    );
+
+    if (errorNumeric.length > 0) {
+      res.status(400).send({
+        status: 'ERROR',
+        message: `These fields must be numeric: 
+          ${JSON.stringify(errorNumeric)}
+          `,
+      });
+    } else if (!req.body) {
       res.status(400).send({ message: 'Content can not be empty!' });
       return;
-    }
-    if (!name) {
-      res
-        .status(400)
-        .send({ message: "Error: Missing 'Name' parameter is requered" });
+    } else if (!name) {
+      res.status(400).send({
+        status: 'ERROR',
+        message: "Error: Missing 'Name' parameter is requered",
+      });
       return;
-    }
-    if (!createdBy) {
+    } else if (!createdBy) {
       res.status(400).send({
         status: 'ERROR',
         message: "Error: Missing 'createdBy' parameter",
@@ -150,11 +169,27 @@ const updateSpecialties = async (req, res) => {
 
     const { name, updatedBy } = req.body;
 
-    if (!req.body) {
+    const atributeValidate = {
+      updatedBy,
+    };
+    const errorNumeric = Object.keys(atributeValidate).reduce(
+      (act, itemValidate) => {
+        if (typeof atributeValidate[itemValidate] !== 'number') {
+          act.push(itemValidate);
+        }
+        return act;
+      },
+      [],
+    );
+
+    if (errorNumeric.length > 0) {
+      res.status(400).send({
+        status: 'ERROR',
+        message: 'These fields must be numeric: [updatedBy]',
+      });
+    } else if (!req.body) {
       res.status(400).send({ message: 'Content can not be empty!' });
-      return;
-    }
-    if (!updatedBy) {
+    } else if (!updatedBy) {
       res.status(400).send({
         status: 'ERROR',
         message: "Error: Missing 'updatedBy' parameter",
